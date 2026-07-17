@@ -83,7 +83,7 @@ select#nutrient{ font-family:inherit; font-size:1rem; font-weight:600; color:var
 /* category dot (legend key reused in matrix + table) */
 .dot{ display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:5px; vertical-align:baseline; flex:none; }
 
-/* nutrient matrix — small multiples, 3 cheapest sources each */
+/* nutrient matrix: small multiples, 3 cheapest sources each */
 .matrix-panel{ margin-top:18px; }
 .mx-group{ margin-top:14px; }
 .mx-group:first-child{ margin-top:6px; }
@@ -169,10 +169,10 @@ td.num, th.num{ text-align:right; font-variant-numeric:tabular-nums; }
       <div>
         <h1>The cheapest real food for every nutrient</h1>
         <p class="sub">For each nutrient, which whole foods deliver it for the least money? Bars show the
-          <strong>cost of one day's Daily Value</strong> &mdash; the price of eating enough of that one food to hit
+          <strong>cost of one day's Daily Value</strong>: the price of eating enough of that one food to hit
           100% of the FDA Daily Value. Lower is cheaper.
-          Prices are <strong>US national averages</strong> in nominal dollars (USDA and BLS); each food is shown at its
-          cheapest available source, so the pricing date varies &mdash; hover any mark for its source and period.</p>
+          Prices are <strong>US national averages</strong> in nominal dollars (USDA and BLS). Each food is shown at its
+          cheapest available source, so the pricing date varies; hover any mark for its source and period.</p>
       </div>
       <button class="theme-btn" id="themeBtn" type="button">◐ Theme</button>
     </header>
@@ -192,7 +192,7 @@ td.num, th.num{ text-align:right; font-variant-numeric:tabular-nums; }
     <div class="legend" id="legend"></div>
 
     <section class="panel matrix-panel">
-      <h2>Every nutrient at a glance &mdash; 3 cheapest sources each</h2>
+      <h2>Every nutrient at a glance: 3 cheapest sources each</h2>
       <p class="pnote">Bar length compares the three <em>within</em> each nutrient (the widest is that nutrient's
         3rd-cheapest); the dollar figures are comparable across all of them. Click any nutrient to open it below.</p>
       <div id="matrix"></div>
@@ -203,7 +203,7 @@ td.num, th.num{ text-align:right; font-variant-numeric:tabular-nums; }
         <label for="nutrient">Nutrient</label>
         <select id="nutrient"></select>
       </div>
-      <div class="hint">Scopes the two charts below &mdash; or click any cell in the matrix above.</div>
+      <div class="hint">Scopes the two charts below, or click any cell in the matrix above.</div>
     </div>
 
     <div class="panels">
@@ -222,7 +222,7 @@ td.num, th.num{ text-align:right; font-variant-numeric:tabular-nums; }
 
     <div class="tablewrap">
       <details class="tbl">
-        <summary>Table view &mdash; cheapest sources (accessible / sortable data)</summary>
+        <summary>Table view: cheapest sources (accessible / sortable data)</summary>
         <div class="scrollx"><table id="dataTable"></table></div>
       </details>
     </div>
@@ -237,7 +237,7 @@ window.NUTRIENT_DATA = {"generated_note":"Cheapest real-food sources per nutrien
 
 </script>
 <script>
-/* Cheapest real food per nutrient — d3 rendering.
+/* Cheapest real food per nutrient. d3 rendering.
    Data: window.NUTRIENT_DATA (see data.js). Row = [food, catIdx, src, period, price/100g, amount/100g, level] */
 (function () {
   "use strict";
@@ -338,7 +338,7 @@ window.NUTRIENT_DATA = {"generated_note":"Cheapest real-food sources per nutrien
   }
 
   // ---- nutrient matrix (small multiples: 3 cheapest sources each) -------
-  // Spark bars are normalized within each cell — $/day spans ~4 orders of
+  // Spark bars are normalized within each cell: $/day spans ~4 orders of
   // magnitude across nutrients, so one global bar scale would flatten most
   // cells to nothing. The printed $ figures carry the cross-nutrient compare.
   function renderMatrix() {
@@ -377,7 +377,7 @@ window.NUTRIENT_DATA = {"generated_note":"Cheapest real-food sources per nutrien
         const head = cell.append("div").attr("class", "mx-head");
         head.append("span").attr("class", "mx-name").text(n.label);
         head.append("span").attr("class", "mx-cheap")
-          .text(top3.length ? fmtUSD(perDay(top3[0], n)) + "/day" : "—");
+          .text(top3.length ? fmtUSD(perDay(top3[0], n)) + "/day" : "n/a");
 
         if (!top3.length) { cell.append("div").attr("class", "mx-empty").text("no foods at this strictness"); return; }
 
@@ -636,9 +636,9 @@ window.NUTRIENT_DATA = {"generated_note":"Cheapest real-food sources per nutrien
   }
 
   const STRICT_HINT = {
-    0: "All priced foods, including flours, oils, and fortified products — the raw cheapest.",
+    0: "All priced foods, including flours, oils, and fortified products: the raw cheapest.",
     1: "De-branded whole ingredients (drops restaurant & branded strays).",
-    2: "Whole, minimally-processed foods only — no fortified drink mixes gaming the list.",
+    2: "Whole, minimally-processed foods only. No fortified drink mixes gaming the list.",
   };
   function buildStrictness() {
     const seg = document.getElementById("strictness");
@@ -667,13 +667,13 @@ window.NUTRIENT_DATA = {"generated_note":"Cheapest real-food sources per nutrien
 
   // footnote
   document.getElementById("foot").innerHTML =
-    'Sources: USDA <em>FoodData Central</em> food composition, joined to two US retail price series — USDA ERS ' +
-    '<em>Purchase-to-Plate National Average Prices</em> and <em>BLS average price data</em> (via FRED) — normalized to $ per 100 g. ' +
+    'Sources: USDA <em>FoodData Central</em> food composition, joined to two US retail price series (USDA ERS ' +
+    '<em>Purchase-to-Plate National Average Prices</em> and <em>BLS average price data</em> via FRED), normalized to $ per 100 g. ' +
     '"$ per day" multiplies the cheapest $-per-nutrient-unit by the FDA adult Daily Value, i.e. the cost of hitting 100% of that DV ' +
-    'from a single food — an illustrative unit-cost, not a diet plan. "Real food" drops fortified drink mixes, sweets, snacks and ' +
+    'from a single food. It is an illustrative unit-cost, not a diet plan. "Real food" drops fortified drink mixes, sweets, snacks and ' +
     'sauces that otherwise top cheapest-nutrient lists. Rankings keep the cheapest ~200 foods per strictness level.';
 
-  // resize (debounced) — charts are width-responsive
+  // resize (debounced); charts are width-responsive
   let rt;
   window.addEventListener("resize", () => {
     clearTimeout(rt);
